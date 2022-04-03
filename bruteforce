@@ -1,0 +1,20 @@
+#!/bin/bash
+
+chars="0123456789abcdefghijklmnoqprstuvwyzxABCDEFGHIJKLMNOQPRSTUYWVZX\{\}!@#$^&*?"
+len=${#chars}
+
+for i in $(seq 1 $len); do
+	c=$(cut -c $i <<< $chars)
+	index=$(curl -sG --data-urlencode "char=$c" https://elodev.net/challenge/bruteforce | grep -i position | awk -F'[><]' '{ print $3 }' | tail -c 3)
+
+	if [ "$index" != "" ]; then
+		index="${index#"${index%%[![:space:]]*}"}"
+		arr[$index]="$c"
+	fi
+done
+
+for i in ${arr[@]}; do
+	echo -n $i
+done
+
+echo
